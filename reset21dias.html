@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Reset em 21 Dias — Diário de Acompanhamento</title>
+<style>
+:root {
+  --bg: #0e2b36;
+  --card: #153545;
+  --card2: #1a3d4e;
+  --orange: #e87722;
+  --gold: #c9a227;
+  --green: #3d8b6a;
+  --white: #ffffff;
+  --muted: #7aacbc;
+  --border: rgba(255,255,255,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--white); min-height: 100vh; font-size: 14px; }
+.app { max-width: 480px; margin: 0 auto; min-height: 100vh; }
+.header { background: var(--card); padding: 14px 20px; border-bottom: 2px solid var(--orange); position: sticky; top: 0; z-index: 100; }
+.header h1 { font-size: 15px; color: var(--gold); letter-spacing: 2px; font-weight: 700; }
+.header p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.content { padding: 16px; }
+.card { background: var(--card); border-radius: 8px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--border); }
+.card-title { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--gold); margin-bottom: 12px; text-transform: uppercase; }
+.section-bar { background: var(--card2); padding: 7px 14px; border-radius: 6px; margin-bottom: 12px; font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--white); }
+.form-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; flex-wrap: wrap; }
+.form-group { flex: 1; min-width: 110px; }
+.form-label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px; }
+.form-input { background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--white); padding: 4px 0; font-size: 14px; width: 100%; outline: none; }
+.form-input:focus { border-bottom-color: var(--orange); }
+.time-group { display: flex; align-items: center; gap: 3px; }
+.time-input { background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--white); width: 38px; text-align: center; padding: 4px 2px; font-size: 14px; outline: none; -moz-appearance: textfield; }
+.time-input::-webkit-outer-spin-button, .time-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.time-input:focus { border-bottom-color: var(--orange); }
+.time-sep { color: var(--muted); font-size: 12px; }
+.score-row { display: flex; gap: 4px; flex-wrap: wrap; margin: 6px 0; }
+.score-btn { width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer; font-size: 12px; font-weight: 700; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.score-btn.low { background: var(--orange); color: white; }
+.score-btn.mid { background: var(--card2); color: white; border: 1px solid var(--border); }
+.score-btn.high { background: #1e4d60; color: white; border: 1px solid var(--border); }
+.score-btn.selected { background: var(--orange) !important; transform: scale(1.2); box-shadow: 0 0 0 3px rgba(232,119,34,0.35); border-color: var(--orange) !important; }
+.score-legend { display: flex; justify-content: space-between; font-size: 9px; color: var(--muted); margin-top: 2px; }
+.habit-checkbox { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; cursor: pointer; }
+.habit-checkbox input[type=checkbox] { display: none; }
+.habit-box { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.habit-checkbox input:checked ~ .habit-box { background: var(--orange); border-color: var(--orange); }
+.habit-box-inner { display: none; color: white; font-size: 13px; font-weight: 700; }
+.habit-checkbox input:checked ~ .habit-box .habit-box-inner { display: block; }
+.habit-label { font-size: 13px; color: var(--white); line-height: 1.3; }
+.radio-group { display: flex; gap: 12px; flex-wrap: wrap; }
+.radio-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; }
+.radio-btn input[type=radio] { display: none; }
+.radio-circle { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.radio-btn input:checked ~ .radio-circle { border-color: var(--orange); }
+.radio-dot { width: 8px; height: 8px; background: transparent; border-radius: 50%; transition: background 0.15s; }
+.radio-btn input:checked ~ .radio-circle .radio-dot { background: var(--orange); }
+.form-textarea { width: 100%; background: var(--card2); border: 1px solid var(--border); border-radius: 6px; color: var(--white); padding: 8px 10px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 56px; outline: none; margin-top: 4px; }
+.form-textarea:focus { border-color: var(--orange); }
+.btn { display: block; width: 100%; padding: 13px; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: all 0.2s; margin-top: 4px; }
+.btn-primary { background: var(--orange); color: white; }
+.btn-primary:hover { background: #d06010; }
+.btn-secondary { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-gold { background: var(--gold); color: #1a1a1a; }
+.btn-green { background: var(--green); color: white; }
+.day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 18px; }
+.day-cell { aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+.day-cell.locked { background: var(--card2); color: var(--muted); cursor: default; opacity: 0.4; }
+.day-cell.available { background: var(--card2); color: var(--white); border-color: var(--orange); }
+.day-cell.available:hover { background: var(--orange); }
+.day-cell.done { background: var(--orange); color: white; }
+.day-cell.review-done { background: var(--gold); color: #1a1a1a; }
+.day-cell.review-avail { background: var(--card2); color: var(--gold); border-color: var(--gold); }
+.module-bar { padding: 7px 12px; border-radius: 6px; margin-bottom: 7px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.module-1 { background: var(--orange); color: white; }
+.module-2 { background: #c25800; color: white; }
+.module-3 { background: var(--green); color: white; }
+.nav-back { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; cursor: pointer; padding: 12px 16px 0; }
+.nav-back:hover { color: var(--white); }
+.progress-bar { background: var(--card2); height: 5px; border-radius: 3px; margin: 10px 0; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--orange); border-radius: 3px; transition: width 0.5s; }
+.patient-info { background: var(--card2); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.patient-info strong { color: var(--gold); }
+.day-badge { background: var(--orange); color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.tab { flex: 1; padding: 9px; background: var(--card2); border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font-size: 11px; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.2s; }
+.tab.active { background: var(--orange); color: white; border-color: var(--orange); }
+.nao-neg { background: transparent; border: 2px solid var(--gold); border-radius: 8px; padding: 14px; margin: 14px 0; text-align: center; }
+.nao-neg h3 { color: var(--gold); font-size: 13px; letter-spacing: 2px; margin-bottom: 10px; }
+.nao-neg li { color: var(--white); font-size: 12px; list-style: none; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.nao-neg li:last-child { border-bottom: none; }
+.habit-count-row { display: flex; align-items: center; gap: 6px; margin-bottom: 7px; }
+.habit-count-label { font-size: 11px; color: var(--white); flex: 1; min-width: 120px; line-height: 1.2; }
+.day-bubbles { display: flex; gap: 3px; }
+.day-bubble { width: 22px; height: 22px; border-radius: 50%; background: var(--card2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; cursor: pointer; color: var(--muted); transition: all 0.15s; user-select: none; }
+.day-bubble.marked { background: var(--orange); border-color: var(--orange); color: white; }
+.cover-page { background: linear-gradient(180deg, #153545 0%, #0e2b36 100%); min-height: 100vh; display: flex; flex-direction: column; }
+.cover-top { padding: 50px 24px 30px; text-align: center; border-bottom: 3px solid var(--orange); }
+.cover-circle { width: 100px; height: 100px; border: 3px solid var(--gold); border-radius: 50%; margin: 24px auto; display: flex; align-items: center; justify-content: center; }
+.cover-dot { width: 14px; height: 14px; background: var(--gold); border-radius: 50%; }
+.alert-saved { background: var(--green); color: white; padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 10px; display: none; }
+table.compare { width: 100%; border-collapse: collapse; font-size: 12px; }
+table.compare th { padding: 6px 4px; color: var(--muted); border-bottom: 1px solid var(--border); text-align: center; font-weight: 600; }
+table.compare th:first-child { text-align: left; }
+table.compare td { padding: 5px 4px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+table.compare input { background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--white); width: 55px; text-align: center; font-size: 12px; outline: none; padding: 2px 0; }
+.footer-credits { text-align: center; padding: 20px 16px; color: var(--muted); font-size: 10px; line-height: 1.6; border-top: 1px solid var(--border); margin-top: 8px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ─── STORAGE ──────────────────────────────────────────────────
+const KEY = 'reset21_v1';
+let D = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ return {}; }})();
+const save = () => localStorage.setItem(KEY, JSON.stringify(D));
+
+// ─── DAYS CONFIG ──────────────────────────────────────────────
+const MOD = {
+  1: { name:'SAIR DO MODO EMERGÊNCIA', cls:'module-1' },
+  2: { name:'INTERROMPER O PADRÃO', cls:'module-2' },
+  3: { name:'INSTALAR O NOVO ESTADO', cls:'module-3' }
+};
+
+const DAYS = {
+  1:  { t:'HIDRATAÇÃO',          m:1, inst:'Beber 2L de água distribuídos ao longo do dia',             h:['Hidratação: 2L de água','Último copo até às 20h'] },
+  2:  { t:'LUZ SOLAR MATINAL',   m:1, inst:'15–30 min de sol nas primeiras 2h após acordar',            h:['Exposição solar 15–30 min (antes 10h)','Hidratação 2L','Sem óculos de sol'] },
+  3:  { t:'HORÁRIO FIXO',        m:1, inst:'Definir e manter horário fixo para dormir e acordar',       h:['Horário fixo de acordar','Horário fixo de dormir','Luz solar matinal','Hidratação 2L'] },
+  4:  { t:'ZERO TELAS 1H ANTES', m:1, inst:'Desligar todos os dispositivos 1h antes de dormir',         h:['Zero telas 1h antes de dormir','Atividade substituta realizada','Horário fixo','Luz solar','Hidratação 2L'] },
+  5:  { t:'BANHO MORNO NOTURNO', m:1, inst:'Banho morno (36–38°C) 1–2 horas antes de dormir',          h:['Banho morno (36–38°C) 1–2h antes','Zero telas 1h antes','Horário fixo','Luz solar','Hidratação 2L'] },
+  6:  { t:'CAFEÍNA ATÉ 14H',     m:1, inst:'Última dose de cafeína até as 14h',                         h:['Sem cafeína após 14h','Substituto noturno (camomila)','Banho morno','Zero telas','Horário fixo','Luz solar','Hidratação 2L'] },
+  7:  { t:'REVISÃO SEMANAL',     m:1, inst:'Revisar a semana e planejar a próxima',                     h:['Revisão semanal realizada','Todos os hábitos da semana 1'], rev:1 },
+  8:  { t:'BANHO FRIO MATINAL',  m:2, inst:'Banho frio ou morno logo ao acordar',                       h:['Banho frio/morno ao acordar','Todos os hábitos da Semana 1'] },
+  9:  { t:'RESPIRAÇÃO 4-7-8',    m:2, inst:'Mínimo 4 ciclos de respiração 4-7-8 antes de dormir',      h:['Respiração 4-7-8 (mín. 4 ciclos)','Banho matinal','Todos os hábitos da Semana 1'] },
+  10: { t:'JANTAR LEVE 3H ANTES',m:2, inst:'Jantar leve pelo menos 3 horas antes de dormir',           h:['Jantar leve 3h antes de dormir','Respiração 4-7-8','Banho matinal','Todos da Semana 1'] },
+  11: { t:'CAMINHADA À TARDE',   m:2, inst:'Caminhada de 15–30 min entre 14h e 17h',                   h:['Caminhada 15–30 min (14h–17h)','Jantar leve','Respiração 4-7-8','Todos da Semana 1'] },
+  12: { t:'REDUÇÃO LUZ NOTURNA', m:2, inst:'Diminuir luz artificial em casa 2h antes de dormir',       h:['Luz reduzida 2h antes de dormir','Caminhada à tarde','Respiração 4-7-8','Todos da Semana 1'] },
+  13: { t:'SUPLEMENTAÇÃO',       m:2, inst:'Avaliar e iniciar suplementação básica se necessário',      h:['Suplementação (magnésio/vit. D)','Redução luz noturna','Caminhada','Respiração 4-7-8','Todos da Semana 1'] },
+  14: { t:'REVISÃO SEMANAL',     m:2, inst:'Revisar a semana 2 e planejar a semana 3',                 h:['Revisão semanal realizada','Todos os hábitos da Semana 2'], rev:2 },
+  15: { t:'LEITURA PRÉ-SONO',    m:3, inst:'Leitura de livro físico por 30 min antes de dormir',       h:['Leitura 30 min (livro físico)','Rotina pré-sono mantida','Todos da Semana 2'] },
+  16: { t:'TEMPERATURA DO QUARTO',m:3,inst:'Ajustar temperatura do quarto para 18–21°C',               h:['Temperatura do quarto 18–21°C','Leitura noturna','Todos da Semana 2'] },
+  17: { t:'ROTINA COMPLETA',     m:3, inst:'Executar rotina pré-sono estruturada de 60 minutos',        h:['Rotina completa 60 min (mesma ordem)','Temperatura do quarto','Leitura','Todos da Semana 2'] },
+  18: { t:'GESTÃO DE COCHILOS',  m:3, inst:'Cochilos: máx. 20 min, somente antes das 15h',             h:['Cochilo dentro das regras (se houve)','Rotina pré-sono','Todos da Semana 2'] },
+  19: { t:'SOL NO FINAL DO DIA', m:3, inst:'10–15 min de sol entre 17h e 18h30',                       h:['Sol final do dia (17h–18h30)','Gestão de cochilos','Rotina pré-sono','Todos da Semana 2'] },
+  20: { t:'INTEGRAÇÃO COMPLETA', m:3, inst:'Executar todos os hábitos dos 19 dias em um único dia',    h:['TODOS os hábitos realizados hoje','Score de integração registrado'] },
+  21: { t:'AVALIAÇÃO FINAL',     m:3, inst:'Avaliar resultados e criar plano de manutenção',            h:['Avaliação final preenchida','Plano de manutenção definido','5 não-negociáveis confirmados'], final:true }
+};
+
+const REV_HABITS = {
+  1:['Hidratação 2L','Luz solar matinal','Horário fixo de dormir/acordar','Zero telas 1h antes','Banho morno noturno','Cafeína até 14h'],
+  2:['Banho frio/morno matinal','Respiração 4-7-8','Jantar leve 3h antes','Caminhada à tarde (14h–17h)','Redução luz artificial','Suplementação'],
+  3:['Leitura 30 min antes','Temperatura do quarto','Rotina pré-sono 60 min','Gestão de cochilos','Sol no final do dia','Integração completa']
+};
+
+// ─── STATE ────────────────────────────────────────────────────
+let view = 'cadastro', curDay = 1, curTab = 'diario', scores = {};
+
+// ─── HELPERS ─────────────────────────────────────────────────
+const fmtDate = s => s ? new Date(s+'T12:00:00').toLocaleDateString('pt-BR') : '';
+const elapsed = () => {
+  if (!D.p?.start) return 0;
+  return Math.floor((Date.now() - new Date(D.p.start+'T00:00:00')) / 86400000) + 1;
+};
+const isDone = d => !!(D.days?.[d]?.done);
+const isAvail = d => d <= elapsed();
+const doneCnt = () => Object.values(D.days||{}).filter(x=>x.done).length;
+
+function scoreHtml(name, val, low, high) {
+  let h = `<div class="score-row" id="sr_${name}">`;
+  for (let i=1;i<=10;i++) {
+    const cls = i<=3?'low':i<=7?'mid':'high';
+    const sel = (val==i)?' selected':'';
+    h += `<button class="score-btn ${cls}${sel}" onclick="setScore('${name}',${i},this)">${i}</button>`;
+  }
+  h += '</div>';
+  if(low) h += `<div class="score-legend"><span>${low}</span><span>${high}</span></div>`;
+  return h;
+}
+
+function setScore(name, val, btn) {
+  scores[name] = val;
+  const row = btn.closest('.score-row');
+  row.querySelectorAll('.score-btn').forEach((b,i) => b.classList.toggle('selected', i+1===val));
+}
+
+function checkboxHtml(id, label, checked) {
+  return `<label class="habit-checkbox">
+    <input type="checkbox" id="${id}" ${checked?'checked':''} style="display:none">
+    <div class="habit-box" onclick="toggleCheck('${id}')"><div class="habit-box-inner" id="${id}_inner" style="${checked?'':'display:none'}">✓</div></div>
+    <span class="habit-label">${label}</span>
+  </label>`;
+}
+
+function toggleCheck(id) {
+  const inp = document.getElementById(id);
+  const inner = document.getElementById(id+'_inner');
+  if (!inp) return;
+  inp.checked = !inp.checked;
+  inner.style.display = inp.checked ? 'block' : 'none';
+  const box = inner.parentElement;
+  box.style.background = inp.checked ? 'var(--orange)' : '';
+  box.style.borderColor = inp.checked ? 'var(--orange)' : '';
+}
+
+function radioHtml(name, options, current) {
+  return '<div class="radio-group">' + options.map(o =>
+    `<label class="radio-btn">
+      <input type="radio" name="${name}" value="${o.v}" ${current===o.v?'checked':''}>
+      <div class="radio-circle"><div class="radio-dot"></div></div>
+      ${o.l}
+    </label>`
+  ).join('') + '</div>';
+}
+
+// ─── RENDER: CADASTRO ─────────────────────────────────────────
+function renderCadastro() {
+  const p = D.p||{};
+  return `<div class="app"><div class="cover-page">
+    <div class="cover-top">
+      <h1 style="font-size:28px;font-weight:900;color:var(--gold);letter-spacing:4px;">RESET EM 21 DIAS</h1>
+      <p style="color:var(--muted);font-size:12px;margin-top:6px;">Protocolo Integrado de Regulação Fisiológica e Emocional</p>
+      <div class="cover-circle"><div class="cover-dot"></div></div>
+      <h2 style="font-size:17px;letter-spacing:3px;color:white;">DIÁRIO DE ACOMPANHAMENTO</h2>
+      <p style="font-size:11px;color:var(--muted);margin-top:4px;">Bônus exclusivo do protocolo</p>
+    </div>
+    <div class="content" style="flex:1;">
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title">Identificação do paciente</div>
+        <div style="margin-bottom:14px;">
+          <label class="form-label">Nome completo</label>
+          <input class="form-input" id="c_nome" type="text" placeholder="Seu nome completo" value="${p.nome||''}">
+        </div>
+        <div style="margin-bottom:14px;">
+          <label class="form-label">Data de início do protocolo</label>
+          <input class="form-input" id="c_data" type="date" value="${p.start||''}">
+        </div>
+        <div style="margin-bottom:14px;">
+          <label class="form-label">Perfil — Raio-X da insônia</label>
+          <input class="form-input" id="c_perfil" type="text" placeholder="Seu perfil de insônia" value="${p.perfil||''}">
+        </div>
+        <div style="margin-bottom:16px;">
+          <label class="form-label">Queixa principal</label>
+          <input class="form-input" id="c_queixa" type="text" placeholder="Descreva sua queixa principal" value="${p.queixa||''}">
+        </div>
+        <button class="btn btn-primary" onclick="saveCadastro()">INICIAR PROTOCOLO →</button>
+      </div>
+    </div>
+    <div class="footer-credits">Alexandre Daniel Schröder · Especialista em Ansiedade e Insônia Emocional<br>alexandreschroder.com.br · Versão 2.0 · 2026</div>
+  </div></div>`;
+}
+
+function saveCadastro() {
+  const nome = document.getElementById('c_nome').value.trim();
+  const start = document.getElementById('c_data').value;
+  if (!nome||!start) { alert('Preencha seu nome e a data de início.'); return; }
+  D.p = { nome, start, perfil:document.getElementById('c_perfil').value, queixa:document.getElementById('c_queixa').value };
+  save(); view='dash'; render();
+}
+
+// ─── RENDER: DASHBOARD ────────────────────────────────────────
+function renderDash() {
+  const done = doneCnt(), pct = Math.round(done/21*100), el = elapsed();
+  let h = `<div class="app">
+    <div class="header"><h1>RESET EM 21 DIAS</h1><p>Diário de ${D.p?.nome||'Paciente'}</p></div>
+    <div class="content">
+      <div class="patient-info">
+        <div><strong>${D.p?.nome}</strong><div style="font-size:10px;color:var(--muted);margin-top:2px;">Início: ${fmtDate(D.p?.start)}</div></div>
+        <div class="day-badge">DIA ${Math.min(el,21)} / 21</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:16px;text-align:right;">${done}/21 dias concluídos · ${pct}%</div>
+
+      <div class="module-bar module-1">MÓDULO 1 — SAIR DO MODO EMERGÊNCIA · Dias 1–7</div>
+      <div class="day-grid">`;
+  for(let d=1;d<=7;d++) h+=dayCell(d,el);
+  h += `</div>
+      <div class="module-bar module-2">MÓDULO 2 — INTERROMPER O PADRÃO · Dias 8–14</div>
+      <div class="day-grid">`;
+  for(let d=8;d<=14;d++) h+=dayCell(d,el);
+  h += `</div>
+      <div class="module-bar module-3">MÓDULO 3 — INSTALAR O NOVO ESTADO · Dias 15–21</div>
+      <div class="day-grid">`;
+  for(let d=15;d<=21;d++) h+=dayCell(d,el);
+  h += `</div>
+      <div class="nao-neg">
+        <h3>OS 5 NÃO-NEGOCIÁVEIS</h3>
+        <ul>
+          <li>☀️ Luz solar matinal</li>
+          <li>🕐 Horário fixo de dormir e acordar</li>
+          <li>📵 Zero telas 1h antes de dormir</li>
+          <li>☕ Cafeína apenas até as 14h</li>
+          <li>🫁 Respiração 4-7-8 antes de dormir</li>
+        </ul>
+      </div>
+      <button class="btn btn-secondary" style="margin-top:8px;" onclick="editCad()">✏️ Editar dados do paciente</button>
+    </div>
+  </div>`;
+  return h;
+}
+
+function dayCell(d, el) {
+  const done = isDone(d), avail = d<=el, isRev = DAYS[d].rev||DAYS[d].final;
+  let cls, click;
+  if (done) { cls=isRev?'review-done':'done'; click=`onclick="openDay(${d})"`; }
+  else if (avail) { cls=isRev?'review-avail':'available'; click=`onclick="openDay(${d})"`; }
+  else { cls='locked'; click=''; }
+  const icon = done ? '✓' : (isRev ? '★' : d);
+  return `<div class="day-cell ${cls}" ${click} title="Dia ${d}: ${DAYS[d].t}">${icon}</div>`;
+}
+
+function openDay(d) { curDay=d; scores={}; curTab='diario'; view='day'; render(); }
+function editCad() { view='cadastro'; render(); }
+
+// ─── RENDER: DIA ──────────────────────────────────────────────
+function renderDay(d) {
+  const cfg = DAYS[d], mod = MOD[cfg.m], data = D.days?.[d]||{};
+  scores = { qualidade_sono: data.qualidade_sono, estresse: data.estresse };
+
+  let h = `<div class="app">
+    <div class="header"><h1>RESET EM 21 DIAS</h1><p>${D.p?.nome||''}</p></div>
+    <div class="nav-back" onclick="goBack()">← Voltar ao mapa</div>
+    <div class="content">
+      <div style="margin-bottom:14px;">
+        <div class="${mod.cls} module-bar" style="display:inline-block;padding:3px 10px;font-size:10px;margin-bottom:6px;">MÓD.${cfg.m} · ${mod.name}</div>
+        <h2 style="font-size:20px;font-weight:900;color:var(--gold);">DIA ${String(d).padStart(2,'0')} — ${cfg.t}</h2>
+        <p style="font-size:11px;color:var(--muted);margin-top:3px;">${cfg.inst}</p>
+      </div>`;
+
+  if (cfg.rev||cfg.final) {
+    h += `<div class="tabs">
+      <div class="tab ${curTab==='diario'?'active':''}" onclick="switchTab('diario')">📓 Diário do Dia</div>
+      <div class="tab ${curTab==='rev'?'active':''}" onclick="switchTab('rev')">${cfg.final?'📊 Avaliação Final':'📋 Revisão Semanal'}</div>
+    </div>`;
+  }
+
+  if (curTab==='diario') {
+    h += `
+      <div class="card">
+        <div class="section-bar">MANHÃ — Sobre a noite anterior</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Fui para cama às</label>
+            <div class="time-group">
+              <input class="time-input" id="d_ch" type="number" min="0" max="23" placeholder="22" value="${data.ch||''}">
+              <span class="time-sep">h</span>
+              <input class="time-input" id="d_cm" type="number" min="0" max="59" placeholder="00" value="${data.cm||''}">
+              <span class="time-sep">min</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Luzes apagadas às</label>
+            <div class="time-group">
+              <input class="time-input" id="d_lh" type="number" min="0" max="23" placeholder="22" value="${data.lh||''}">
+              <span class="time-sep">h</span>
+              <input class="time-input" id="d_lm" type="number" min="0" max="59" placeholder="30" value="${data.lm||''}">
+              <span class="time-sep">min</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Tempo para adormecer (min)</label>
+            <input class="time-input" id="d_ador" type="number" min="0" placeholder="20" value="${data.ador||''}" style="width:60px;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Acordei durante a noite</label>
+            ${radioHtml('anoite',[{v:'sim',l:'Sim'},{v:'nao',l:'Não'}],data.anoite)}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Acordei às</label>
+            <div class="time-group">
+              <input class="time-input" id="d_ah" type="number" min="0" max="23" placeholder="6" value="${data.ah||''}">
+              <span class="time-sep">h</span>
+              <input class="time-input" id="d_am" type="number" min="0" max="59" placeholder="00" value="${data.am||''}">
+              <span class="time-sep">min</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Horas totais de sono</label>
+            <div class="time-group">
+              <input class="time-input" id="d_sh" type="number" min="0" max="24" placeholder="7" value="${data.sh||''}">
+              <span class="time-sep">h</span>
+              <input class="time-input" id="d_sm" type="number" min="0" max="59" placeholder="00" value="${data.sm||''}">
+              <span class="time-sep">min</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:8px;">
+          <label class="form-label">Qualidade do sono</label>
+          ${scoreHtml('qualidade_sono',data.qualidade_sono,'1 = Péssimo, não descansei nada','10 = Excelente, acordei renovado')}
+        </div>
+        <div style="margin-top:10px;">
+          <label class="form-label">Acordei sentindo</label>
+          ${radioHtml('sentindo',[{v:'descansado',l:'Descansado'},{v:'cansado',l:'Cansado'},{v:'mais_menos',l:'Mais ou menos'}],data.sentindo)}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-bar">NOITE — Hábitos realizados hoje</div>
+        ${cfg.h.map((hab,i)=>checkboxHtml(`h${i}`,hab,data[`h${i}`])).join('')}
+        <div style="margin-top:10px;">
+          <label class="form-label">Nível de estresse</label>
+          ${scoreHtml('estresse',data.estresse,'1 = Sem estresse, dia tranquilo','10 = Estresse extremo')}
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="margin-bottom:10px;">
+          <label class="form-label">Observações do dia</label>
+          <textarea class="form-textarea" id="d_obs" placeholder="Como foi o dia...">${data.obs||''}</textarea>
+        </div>
+        <div style="margin-bottom:10px;">
+          <label class="form-label">O que funcionou bem</label>
+          <textarea class="form-textarea" id="d_bem" placeholder="O que funcionou...">${data.bem||''}</textarea>
+        </div>
+        <div>
+          <label class="form-label">Ajuste para amanhã</label>
+          <textarea class="form-textarea" id="d_ajuste" placeholder="O que vou ajustar...">${data.ajuste||''}</textarea>
+        </div>
+      </div>
+
+      <div id="saved_msg" class="alert-saved">✓ Dia ${d} salvo com sucesso!</div>
+      <button class="btn btn-primary" onclick="saveDay(${d})">SALVAR DIA ${d}</button>
+      ${isDone(d)?'<div style="text-align:center;color:var(--green);font-size:11px;margin-top:6px;">✓ Dia concluído</div>':''}
+    `;
+  }
+
+  if ((cfg.rev||cfg.final) && curTab==='rev') {
+    h += cfg.final ? renderFinalEval() : renderRevSemana(cfg.rev);
+  }
+
+  h += `</div></div>`;
+  return h;
+}
+
+function saveDay(d) {
+  if (!D.days) D.days = {};
+  const cfg = DAYS[d];
+  const data = {
+    ch:v('d_ch'), cm:v('d_cm'), lh:v('d_lh'), lm:v('d_lm'),
+    ador:v('d_ador'), anoite:r('anoite'), ah:v('d_ah'), am:v('d_am'),
+    sh:v('d_sh'), sm:v('d_sm'),
+    qualidade_sono:scores.qualidade_sono, sentindo:r('sentindo'),
+    estresse:scores.estresse,
+    obs:v('d_obs'), bem:v('d_bem'), ajuste:v('d_ajuste'), done:true
+  };
+  cfg.h.forEach((_,i) => { data[`h${i}`] = document.getElementById(`h${i}`)?.checked; });
+  D.days[d] = data; save();
+  const msg = document.getElementById('saved_msg');
+  if(msg){ msg.style.display='block'; setTimeout(()=>msg.style.display='none',3000); }
+}
+
+// ─── RENDER: REVISÃO SEMANAL ──────────────────────────────────
+function renderRevSemana(w) {
+  const rv = D.rev?.[w]||{}, habs = REV_HABITS[w];
+  const tits = {1:'MÓDULO 1 — SAIR DO MODO EMERGÊNCIA',2:'MÓDULO 2 — INTERROMPER O PADRÃO',3:'MÓDULO 3 — INSTALAR O NOVO ESTADO'};
+  const subs = {1:'Semana de Fundação',2:'Semana de Consolidação',3:'Semana de Otimização'};
+  const nexts = {1:'MÓDULO 2 — INTERROMPER O PADRÃO',2:'MÓDULO 3 — INSTALAR O NOVO ESTADO'};
+
+  let h = `<div class="card">
+    <div class="card-title">REVISÃO — ${tits[w]}</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:10px;">Dias ${(w-1)*7+1}–${w*7} · ${subs[w]}</div>
+    <p style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:8px;">CHECKLIST — Quantos dias realizei cada hábito?</p>`;
+
+  habs.forEach((hab,hi) => {
+    h += `<div class="habit-count-row">
+      <div class="habit-count-label">${hab}</div>
+      <div class="day-bubbles">`;
+    for(let i=1;i<=7;i++){
+      const mk = rv[`h${hi}d${i}`]?' marked':'';
+      h += `<div class="day-bubble${mk}" onclick="toggleRevHabit(${w},${hi},${i})">${i}</div>`;
+    }
+    h += `</div></div>`;
+  });
+
+  h += `</div>
+  <div class="card">
+    <div class="card-title">AVALIAÇÃO DO SONO — Comparação com semana anterior</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Tempo médio para adormecer (min)</label>
+        <input class="form-input" id="rv_ador" type="number" placeholder="ex: 20" value="${rv.ador||''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Despertares noturnos (média)</label>
+        <input class="form-input" id="rv_desp" type="number" placeholder="ex: 1" value="${rv.desp||''}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Horas médias de sono (h)</label>
+        <input class="form-input" id="rv_horas" type="number" step="0.5" placeholder="ex: 7" value="${rv.horas||''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Qualidade média (1–10)</label>
+        <input class="form-input" id="rv_qual" type="number" min="1" max="10" placeholder="ex: 7" value="${rv.qual||''}">
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title" style="color:var(--orange);">PERGUNTAS DE REFLEXÃO</div>
+    <div style="margin-bottom:10px;"><label class="form-label">Qual hábito foi mais FÁCIL de implementar esta semana?</label><textarea class="form-textarea" id="rv_facil" placeholder="...">${rv.facil||''}</textarea></div>
+    <div style="margin-bottom:10px;"><label class="form-label">Qual hábito foi mais DIFÍCIL?</label><textarea class="form-textarea" id="rv_dific" placeholder="...">${rv.dific||''}</textarea></div>
+    <div style="margin-bottom:10px;"><label class="form-label">Qual mudança mais perceptível você notou no sono?</label><textarea class="form-textarea" id="rv_mud" placeholder="...">${rv.mud||''}</textarea></div>
+    <div><label class="form-label">Qual obstáculo quer resolver na próxima semana?</label><textarea class="form-textarea" id="rv_obst" placeholder="...">${rv.obst||''}</textarea></div>
+  </div>`;
+
+  if(nexts[w]) {
+    h += `<div class="card">
+      <div class="card-title" style="color:var(--orange);">PLANO PARA ${nexts[w]}</div>
+      <div style="margin-bottom:10px;"><label class="form-label">Vou MANTER:</label><input class="form-input" id="rv_mant" placeholder="..." value="${rv.mant||''}"></div>
+      <div style="margin-bottom:10px;"><label class="form-label">Vou AJUSTAR:</label><input class="form-input" id="rv_ajust" placeholder="..." value="${rv.ajust||''}"></div>
+      <div><label class="form-label">Vou PRIORIZAR:</label><input class="form-input" id="rv_prior" placeholder="..." value="${rv.prior||''}"></div>
+    </div>`;
+  }
+
+  h += `<div id="saved_rev" class="alert-saved">✓ Revisão da Semana ${w} salva!</div>
+  <button class="btn btn-gold" onclick="saveRev(${w})">SALVAR REVISÃO DA SEMANA ${w}</button>`;
+  return h;
+}
+
+function toggleRevHabit(w,hi,day) {
+  if(!D.rev) D.rev={};
+  if(!D.rev[w]) D.rev[w]={};
+  const k=`h${hi}d${day}`;
+  D.rev[w][k]=!D.rev[w][k]; save();
+  const rows = document.querySelectorAll('.habit-count-row');
+  if(rows[hi]){ const b=rows[hi].querySelectorAll('.day-bubble')[day-1]; if(b) b.classList.toggle('marked',D.rev[w][k]); }
+}
+
+function saveRev(w) {
+  if(!D.rev) D.rev={};
+  const rv = D.rev[w]||{};
+  rv.ador=v('rv_ador'); rv.desp=v('rv_desp'); rv.horas=v('rv_horas'); rv.qual=v('rv_qual');
+  rv.facil=v('rv_facil'); rv.dific=v('rv_dific'); rv.mud=v('rv_mud'); rv.obst=v('rv_obst');
+  rv.mant=v('rv_mant'); rv.ajust=v('rv_ajust'); rv.prior=v('rv_prior');
+  D.rev[w]=rv; save();
+  flash('saved_rev');
+}
+
+// ─── RENDER: AVALIAÇÃO FINAL ──────────────────────────────────
+function renderFinalEval() {
+  const fe = D.fe||{};
+  const inds = ['Tempo para adormecer (min)','Despertares noturnos (x/noite)','Horas totais de sono (h)','Qualidade geral do sono (1–10)','Energia ao acordar (1–10)'];
+  const habsFe = ['Hidratação 2L','Luz solar matinal','Horário fixo','Zero telas 1h antes','Banho morno noturno','Cafeína até 14h','Banho matinal','Respiração 4-7-8','Jantar leve','Caminhada à tarde','Leitura noturna','Redução luz noturna'];
+  const results = ['Mais energia','Humor melhor','Menos ansiedade','Melhor foco','Menos irritabilidade'];
+
+  let h = `<div class="card">
+    <div class="card-title">AVALIAÇÃO FINAL — DIA 21</div>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:10px;">Compare seu ponto de partida com onde você chegou</p>
+    <p style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:8px;">ANTES vs DEPOIS — Sono Objetivo</p>
+    <table class="compare">
+      <tr><th>Indicador</th><th>Dia 0 (Antes)</th><th>Dia 21 (Hoje)</th></tr>`;
+  inds.forEach((ind,i) => {
+    h += `<tr><td style="color:var(--muted);">${ind}</td>
+      <td style="text-align:center;"><input id="fe_a${i}" type="number" value="${fe[`a${i}`]||''}"></td>
+      <td style="text-align:center;"><input id="fe_d${i}" type="number" value="${fe[`d${i}`]||''}"></td>
+    </tr>`;
+  });
+  h += `</table></div>
+
+  <div class="card">
+    <div class="card-title">HÁBITOS QUE SE TORNARAM AUTOMÁTICOS</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+    ${habsFe.map((hb,i)=>checkboxHtml(`fe_h${i}`,hb,fe[`fh${i}`])).join('')}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">RESULTADOS ALÉM DO SONO</div>
+    ${results.map((r,i)=>checkboxHtml(`fe_r${i}`,r,fe[`fr${i}`])).join('')}
+  </div>
+
+  <div class="card nao-neg" style="border:2px solid var(--gold);">
+    <h3>MEU COMPROMISSO PÓS-PROTOCOLO</h3>
+    <ul style="text-align:left;">
+      <li>☀️ Luz solar matinal (15–30 min)</li>
+      <li>🕐 Horário fixo de dormir/acordar</li>
+      <li>📵 Zero telas 1h antes de dormir</li>
+      <li>☕ Cafeína apenas até as 14h</li>
+      <li>🫁 Respiração 4-7-8 antes de dormir</li>
+    </ul>
+    <div style="margin-top:14px;display:flex;gap:20px;justify-content:center;font-size:11px;color:var(--muted);">
+      <span>Assinatura: _________________</span>
+      <span>Data: ___________</span>
+    </div>
+  </div>
+
+  <div id="saved_fe" class="alert-saved">✓ Avaliação Final salva!</div>
+  <button class="btn btn-gold" onclick="saveFe()">SALVAR AVALIAÇÃO FINAL</button>
+  <button class="btn btn-primary" style="margin-top:8px;" onclick="showConclusao()">🏆 VER CONCLUSÃO DO PROTOCOLO</button>`;
+  return h;
+}
+
+function saveFe() {
+  const fe = {};
+  for(let i=0;i<5;i++){ fe[`a${i}`]=v(`fe_a${i}`); fe[`d${i}`]=v(`fe_d${i}`); }
+  for(let i=0;i<12;i++) fe[`fh${i}`] = document.getElementById(`fe_h${i}`)?.checked;
+  for(let i=0;i<5;i++) fe[`fr${i}`] = document.getElementById(`fe_r${i}`)?.checked;
+  D.fe=fe; save(); flash('saved_fe');
+}
+
+function showConclusao() { view='fim'; render(); }
+
+// ─── RENDER: CONCLUSÃO ────────────────────────────────────────
+function renderFim() {
+  return `<div class="app">
+    <div class="header"><h1>RESET EM 21 DIAS</h1><p>Protocolo concluído ✓</p></div>
+    <div class="content" style="text-align:center;padding-top:40px;">
+      <div style="font-size:56px;margin-bottom:16px;">🌟</div>
+      <h1 style="font-size:22px;font-weight:900;color:var(--gold);">Você completou 21 dias.</h1>
+      <p style="color:var(--muted);margin-top:8px;font-size:14px;">A parte mais difícil foi a construção.</p>
+      <p style="color:var(--muted);font-size:14px;">O que vem agora é manutenção.</p>
+
+      <div class="nao-neg" style="margin-top:24px;">
+        <h3>OS 5 NÃO-NEGOCIÁVEIS</h3>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:10px;">80% dos resultados vêm daqui. Mantenha sempre.</p>
+        <ul>
+          <li>1. Luz solar matinal — 15 a 30 min</li>
+          <li>2. Horário fixo de dormir e acordar</li>
+          <li>3. Zero telas 1 hora antes de dormir</li>
+          <li>4. Cafeína apenas até as 14h</li>
+          <li>5. Respiração 4-7-8 antes de dormir</li>
+        </ul>
+      </div>
+
+      <button class="btn btn-secondary" style="margin-top:16px;" onclick="goBack()">← Voltar ao mapa</button>
+      <div class="footer-credits" style="margin-top:24px;">Alexandre Daniel Schröder · Especialista em Ansiedade e Insônia Emocional<br>alexandreschroder.com.br · Versão 2.0 · 2026</div>
+    </div>
+  </div>`;
+}
+
+// ─── UTILS ────────────────────────────────────────────────────
+const v = id => document.getElementById(id)?.value||'';
+const r = name => document.querySelector(`input[name="${name}"]:checked`)?.value;
+const flash = id => { const el=document.getElementById(id); if(el){ el.style.display='block'; setTimeout(()=>el.style.display='none',3000); }};
+function switchTab(t) { curTab=t; render(); }
+function goBack() { view='dash'; render(); }
+
+// ─── MAIN RENDER ──────────────────────────────────────────────
+function render() {
+  const app = document.getElementById('app');
+  if(view==='cadastro') app.innerHTML=renderCadastro();
+  else if(view==='dash') app.innerHTML=renderDash();
+  else if(view==='day') app.innerHTML=renderDay(curDay);
+  else if(view==='fim') app.innerHTML=renderFim();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+if(D.p?.nome && D.p?.start) view='dash';
+render();
+</script>
+</body>
+</html>
